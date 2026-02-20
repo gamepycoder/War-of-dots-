@@ -1,0 +1,12 @@
+[build-system]
+name = "war-of-dots"
+version = "0.0.5"
+description = "A dots-based conflict of questionable necessity"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pygame-ce",
+    "orjson",
+    "perlin-noise",
+    "numpy"
+]
