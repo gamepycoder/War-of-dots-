@@ -48,6 +48,7 @@ from constants import (
     Terrain_type,
 )
 
+
 def nd_zeros() -> np.ndarray:
     """Creates a numpy array of zeros with dtype of float32.
 
@@ -55,6 +56,7 @@ def nd_zeros() -> np.ndarray:
         np.ndarray: A numpy array of zeros, `world_info.rows + 1`, `world_info.cols + 1`
     """
     return np.zeros((world_info.rows + 1, world_info.cols + 1), dtype=np.float32)
+
 
 def dir_dis_to_xy(direction: float, distance: float) -> Coordinate:
     """Converts a direction and distance to an x, y offset.
@@ -452,7 +454,7 @@ class Environment:
                         self.players.index(troop.owner),
                         troop.path,
                         troop.health,
-                        troop.attacking
+                        troop.attacking,
                     )
                 )
 
@@ -769,12 +771,14 @@ class Environment:
             or new_pos.y < 0
         )
 
-        if  new_terrain is not MOUNTAIN and not out_of_world:# and not hit_enemy
+        if new_terrain is not MOUNTAIN and not out_of_world:  # and not hit_enemy
             troop.position = new_pos
 
         return new_pos, enemies_in_range, new_terrain
 
-    def _apply_combat(self, enemies_in_range: list, on_terrain: Terrain_type, troop: Troop) -> None:
+    def _apply_combat(
+        self, enemies_in_range: list, on_terrain: Terrain_type, troop: Troop
+    ) -> None:
         """Applies combat damage to nearest enemy in range based on terrain.
 
         Args:
@@ -844,7 +848,10 @@ class Environment:
                 t_per_c = len(city.owner.troops) / len(
                     [c for c in self.cities if c.owner == city.owner]
                 )
-                if city.timer >= (SERVER_FPS * (CITY_TROOP_GEN_RATE * max(1, t_per_c))) and t_per_c < CITY_TROOP_CAPACITY:
+                if (
+                    city.timer >= (SERVER_FPS * (CITY_TROOP_GEN_RATE * max(1, t_per_c)))
+                    and t_per_c < CITY_TROOP_CAPACITY
+                ):
                     city.owner.troops.append(
                         Troop(
                             Coordinate(

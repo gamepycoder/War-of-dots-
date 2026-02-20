@@ -28,6 +28,7 @@ from constants import (
 )
 import simple_socket
 
+
 def dir_dis_to_xy(direction: float, distance: float) -> tuple:
     """Converts a direction and distance to an x, y offset.
 
@@ -87,7 +88,9 @@ def interp(threshold: float, a: float, b: float) -> float:
     return max(0.0, min(1.0, t))
 
 
-def marching_squares(grid: np.ndarray, cell_size: float, rows: int, cols: int, threshold: float) -> list:
+def marching_squares(
+    grid: np.ndarray, cell_size: float, rows: int, cols: int, threshold: float
+) -> list:
     """Performs marching squares on a grid to extract contour lines.
 
     Args:
@@ -164,7 +167,9 @@ def marching_squares(grid: np.ndarray, cell_size: float, rows: int, cols: int, t
     return segments
 
 
-def marching_squares_poly(grid: np.ndarray, cell_size: float, rows: int, cols: int, threshold: float) -> list:
+def marching_squares_poly(
+    grid: np.ndarray, cell_size: float, rows: int, cols: int, threshold: float
+) -> list:
     """Performs marching squares on a grid to extract polygonal regions.
 
     Args:
@@ -245,7 +250,9 @@ def marching_squares_poly(grid: np.ndarray, cell_size: float, rows: int, cols: i
     return polys
 
 
-def marching_squares_layers(grid: np.ndarray, cell_size: float, rows: int, cols: int, thresholds: list[float]) -> list:
+def marching_squares_layers(
+    grid: np.ndarray, cell_size: float, rows: int, cols: int, thresholds: list[float]
+) -> list:
     """Performs marching squares on a grid to extract polygonal regions for multiple thresholds, creating layers of polygons.
 
     Args:
@@ -270,8 +277,9 @@ class Game:
     """Represents the client-side game application, handling the connection to the server, receiving terrain and game state information,
     and managing the player input and rendering of the game world.
     """
+
     def __init__(self, title: str) -> None:
-        """Initializes the Game client, connects to the server, receives initial terrain and game state information, 
+        """Initializes the Game client, connects to the server, receives initial terrain and game state information,
         and sets up the game window and rendering parameters.
 
         Args:
@@ -357,7 +365,7 @@ class Game:
         self.terrain_by_zoom = {}
 
     def run_game(self) -> None:
-        """Runs the main game loop, handling player input, rendering the game world, 
+        """Runs the main game loop, handling player input, rendering the game world,
         and communicating with the server for game state updates.
         """
         self.color = COLORS[self.player_num]
@@ -422,7 +430,7 @@ class Game:
         pygame.quit()
 
     def handle_events(self) -> None:
-        """Handles player input events, including mouse and keyboard events for controlling the camera, 
+        """Handles player input events, including mouse and keyboard events for controlling the camera,
         selecting troops and cities, and submitting paths to the server.
         """
         if not self.pause:
@@ -685,8 +693,7 @@ class Game:
             self.pause = True
 
     def submit_paths(self) -> None:
-        """Submits the currently drawn paths for troops and cities to the server, and resets the path drawing state.
-        """
+        """Submits the currently drawn paths for troops and cities to the server, and resets the path drawing state."""
         if (not self.drawing_path and not self.drawing_city_path) and (
             self.paths or self.city_paths
         ):
@@ -759,8 +766,7 @@ class Game:
         self.clamp_camera()
 
     def clamp_camera(self) -> None:
-        """Clamps the camera position to the world boundaries.
-        """
+        """Clamps the camera position to the world boundaries."""
         max_camx = max(0.0, self.world_info.world_x - (self.size[0] / self.zoom))
         max_camy = max(0.0, self.world_info.world_y - (self.size[1] / self.zoom))
         if self.camx < 0.0:
@@ -773,7 +779,7 @@ class Game:
             self.camy = max_camy
 
     def draw(self) -> None:
-        """Draws the game world, including the terrain, cities, troops, vision, and borders, 
+        """Draws the game world, including the terrain, cities, troops, vision, and borders,
         as well as any paths being drawn by the player and pause text if the game is paused.
         """
         self.screen.fill((255, 255, 255))
@@ -856,7 +862,9 @@ class Game:
             if owner >= 0:
                 self.draw_city(COLORS[owner], position, dynamic, z)
 
-    def draw_city(self, color: tuple, position: tuple, dynamic: pygame.Surface, z: float) -> None:
+    def draw_city(
+        self, color: tuple, position: tuple, dynamic: pygame.Surface, z: float
+    ) -> None:
         """Draws a city on the dynamic surface.
 
         Args:
@@ -976,7 +984,9 @@ class Game:
                         dynamic, (0, 0, 0), (px, py), (px2, py2), max(1, int(2 * z))
                     )
 
-    def draw_border(self, border_grid: np.ndarray, fog: pygame.Surface, z: float) -> None:
+    def draw_border(
+        self, border_grid: np.ndarray, fog: pygame.Surface, z: float
+    ) -> None:
         """Draws the border on the fog surface.
 
         Args:
@@ -997,7 +1007,9 @@ class Game:
             by = int(b[1] * z)
             pygame.draw.line(fog, (0, 0, 0), (ax, ay), (bx, by), max(1, int(3 * z)))
 
-    def draw_vision(self, vision_grid: np.ndarray, fog: pygame.Surface, z: float) -> None:
+    def draw_vision(
+        self, vision_grid: np.ndarray, fog: pygame.Surface, z: float
+    ) -> None:
         """Draws the vision grid on the fog surface.
 
         Args:

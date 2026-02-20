@@ -1,16 +1,17 @@
 from collections import namedtuple
 
-Coordinate = namedtuple('Coordinate', 'x y', defaults=[0, 0])
+Coordinate = namedtuple("Coordinate", "x y", defaults=[0, 0])
 
 CELL_SIZE = 20
 PLAYERS = 2
 CITIES_PER_PLAYER = 5
 CITY_DISTANCE = 15
 AREA_PER_CITIES = 80000
-RATIO = 9/16
+RATIO = 9 / 16
 AREA = PLAYERS * CITIES_PER_PLAYER * AREA_PER_CITIES
 
 CITY_PLACE_TRIES = 100
+
 
 class Terrain_type:
     def __init__(self, name, color, threshold, attack_mod=1, speed_mod=1):
@@ -20,11 +21,14 @@ class Terrain_type:
         self.attack_mod = attack_mod
         self.speed_mod = speed_mod
 
+
 FOREST = Terrain_type("forest", (30, 125, 30), 0.5, attack_mod=0.75, speed_mod=0.8)
 WATER = Terrain_type("water", (0, 220, 255), -0.1, attack_mod=0.5, speed_mod=0.6)
 PLAINS = Terrain_type("plains", (20, 180, 20), 0.1, attack_mod=1.0, speed_mod=1.0)
 HILL = Terrain_type("hill", (150, 150, 150), 0.7, attack_mod=1.5, speed_mod=0.7)
-MOUNTAIN = Terrain_type("mountain", (100, 100, 100), 0.83, attack_mod=0.0, speed_mod=3.0)
+MOUNTAIN = Terrain_type(
+    "mountain", (100, 100, 100), 0.83, attack_mod=0.0, speed_mod=3.0
+)
 
 CITY_COLOR = (255, 215, 0)
 
@@ -96,4 +100,3 @@ CITY_TROOP_CAPACITY = 10
 CITY_TROOP_GEN_RATE = 20
 
 SERVER_FPS = 45
-        

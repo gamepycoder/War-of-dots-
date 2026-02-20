@@ -3,10 +3,12 @@ import socket
 HEADER = 64
 FORMAT = "utf-8"
 
+
 class Client:
     """
-    A simple socket client. 
+    A simple socket client.
     """
+
     def __init__(self, servip: str, port: int) -> None:
         """Initializes the client with addr details.
 
@@ -25,7 +27,7 @@ class Client:
         self.client.connect(addr)
 
     def send(self, msg: bytes) -> None:
-        """ Sends bytes to the server with a fixed-width header.
+        """Sends bytes to the server with a fixed-width header.
 
         Args:
             msg (bytes): The bytes to send
@@ -35,10 +37,10 @@ class Client:
         send_length += b" " * (HEADER - len(send_length))
         self.client.sendall(send_length)
         self.client.sendall(msg)
-    
+
     def rcv(self) -> bytes:
         """
-        Receives bytes based on the header length. 
+        Receives bytes based on the header length.
         """
         msg_length = int(self.client.recv(HEADER).decode(FORMAT))
         total_received = 0
@@ -52,15 +54,17 @@ class Client:
             chunks.append(data)
 
         return b"".join(chunks)
-    
+
     def close(self) -> None:
         """Closes the socket"""
         self.client.close()
+
 
 class Server:
     """
     A simple socket server
     """
+
     def __init__(self, ip: str, port: int) -> None:
         """Defines the server addr.
 
@@ -88,14 +92,14 @@ class Server:
             self.server.listen(conns)
         else:
             self.server.listen()
-    
+
     def accept(self) -> tuple:
         """Accepts a connection. Returns a socket and an address."""
         conn, addr = self.server.accept()
         conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.conns.append(conn)
         return conn, addr
-        
+
     def send(self, conns: list, msg: bytes) -> None:
         """Sends a byte message to chosen connections.
 
@@ -135,7 +139,7 @@ class Server:
             chunks.append(data)
 
         return b"".join(chunks)
-    
+
     def close(self, conn: socket.socket) -> None:
         """Closes a specific connection and removes it from the list of connections.
 
