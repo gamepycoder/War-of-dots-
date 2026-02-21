@@ -5,7 +5,7 @@ War of Dots is a LAN RTS war game, a simple barebones war simulation built in py
 
 
 Feel free to start issues, I will see and will fix (or at least respond).
-Feel free to contribute.
+Feel free to contribute on the suggestion branch.
 
 TODO
 ====
