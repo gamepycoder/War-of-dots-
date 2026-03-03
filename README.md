@@ -9,7 +9,6 @@ Feel free to contribute on the suggestion branch.
 
 TODO
 ====
-I want to get short term stuff done before doing my next code review and long term is what the code review is to help archive.
 
 Short term:
 ----
