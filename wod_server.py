@@ -35,7 +35,7 @@ from constants import (
     PORTS,
     SERVER_FPS,
     TERRAIN_SPEED_MOD,
-    TerrainTypeS,
+    TERRAIN_TYPES,
     THRESHOLD,
     FOREST,
     PLAINS,
@@ -485,7 +485,7 @@ class Environment:
         """
         if fvalue > FOREST.threshold:
             return FOREST
-        for TerrainType in reversed(TerrainTypeS):
+        for TerrainType in reversed(TERRAIN_TYPES):
             if value > TerrainType.threshold and TerrainType is not FOREST:
                 return TerrainType
 
