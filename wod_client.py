@@ -19,7 +19,7 @@ from constants import (
     THRESHOLD,
     COLORS,
     PORTS,
-    TERRAIN_TYPES,
+    TerrainTypeS,
     FOREST,
     TROOP_D,
     TROOP_HEALTH,
@@ -374,7 +374,7 @@ class Game:
             CELL_SIZE,
             self.world_info.rows,
             self.world_info.cols,
-            list([t.threshold for t in TERRAIN_TYPES if t is not FOREST]),
+            list([t.threshold for t in TerrainTypeS if t is not FOREST]),
         )
         layers.append(
             marching_squares_poly(
