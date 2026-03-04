@@ -35,7 +35,7 @@ from constants import (
     PORTS,
     SERVER_FPS,
     TERRAIN_SPEED_MOD,
-    TERRAIN_TYPES,
+    TerrainTypeS,
     THRESHOLD,
     FOREST,
     PLAINS,
@@ -45,7 +45,7 @@ from constants import (
     TROOP_HEALTH,
     TROOP_VISIBILITY_RADIUS,
     Coordinate,
-    Terrain_type,
+    TerrainType,
 )
 
 
@@ -474,20 +474,20 @@ class Environment:
             world_info.players,
         )
 
-    def get_terrain(self, value: float, fvalue: float) -> Terrain_type:
+    def get_terrain(self, value: float, fvalue: float) -> TerrainType:
         """Determines the terrain type based on the terrain and forest value.
         Args:
             value (float): The terrain value
             fvalue (float): The forest value
 
         Returns:
-            Terrain_type: The terrain type at the given location
+            TerrainType: The terrain type at the given location
         """
         if fvalue > FOREST.threshold:
             return FOREST
-        for terrain_type in reversed(TERRAIN_TYPES):
-            if value > terrain_type.threshold and terrain_type is not FOREST:
-                return terrain_type
+        for TerrainType in reversed(TerrainTypeS):
+            if value > TerrainType.threshold and TerrainType is not FOREST:
+                return TerrainType
 
     def update_troops(self, paths_to_apply: list) -> None:
         """Updates the troops for all players based on the given paths to apply, and updates the vision for all players accordingly.
@@ -632,20 +632,20 @@ class Environment:
         player: Player,
         troop: Troop,
         old_pos: Coordinate,
-        on_terrain: Terrain_type,
+        on_terrain: TerrainType,
         enemies_in_range: list,
-    ) -> tuple[Coordinate, list, Terrain_type]:
+    ) -> tuple[Coordinate, list, TerrainType]:
         """Moves a troop towards its target based on its path, while avoiding allies and checking for collisions with enemies and terrain.
 
         Args:
             player (Player): The player the troop belongs to
             troop (Troop): The troop to move
             old_pos (Coordinate): The previous position of the troop
-            on_terrain (Terrain_type): The terrain type the troop is currently on
+            on_terrain (TerrainType): The terrain type the troop is currently on
             enemies_in_range (list): A list of enemies currently in range of the troop
 
         Returns:
-            tuple[Coordinate, list, Terrain_type]: The new position of the troop, the updated list of enemies in range, and the terrain type the troop is now on.
+            tuple[Coordinate, list, TerrainType]: The new position of the troop, the updated list of enemies in range, and the terrain type the troop is now on.
         """
         target = Coordinate(*troop.path[0])
         terrain_speed = on_terrain.speed_mod
@@ -672,19 +672,19 @@ class Environment:
         player: Player,
         troop: Troop,
         old_pos: Coordinate,
-        on_terrain: Terrain_type,
+        on_terrain: TerrainType,
         enemies_in_range: list,
-    ) -> tuple[Coordinate, list, Terrain_type]:
+    ) -> tuple[Coordinate, list, TerrainType]:
         """Moves a troop that is not following a path (idle).
 
         Args:
             player (Player): The player the troop belongs to
             troop (Troop): The troop to move
             old_pos (Coordinate): The previous position of the troop
-            on_terrain (Terrain_type): The terrain type the troop is currently on
+            on_terrain (TerrainType): The terrain type the troop is currently on
             enemies_in_range (list): A list of enemies currently in range of the troop
         Returns:
-            tuple[Coordinate, list, Terrain_type]: The new position of the troop,
+            tuple[Coordinate, list, TerrainType]: The new position of the troop,
             the updated list of enemies in range, and the terrain type the troop is now on.
         """
         new_pos = self._avoid_allies(player, troop, old_pos)
@@ -728,7 +728,7 @@ class Environment:
 
     def _check_collisions(
         self, player: Player, troop: Troop, new_pos: Coordinate, enemies_in_range: list
-    ) -> tuple[Coordinate, list, Terrain_type]:
+    ) -> tuple[Coordinate, list, TerrainType]:
         """Checks for collisions with other troops and terrain.
 
         Args:
@@ -738,7 +738,7 @@ class Environment:
             enemies_in_range (list): A list of enemies currently in range of the troop
 
         Returns:
-            tuple[Coordinate, list, Terrain_type]: The new position of the troop,
+            tuple[Coordinate, list, TerrainType]: The new position of the troop,
             the updated list of enemies in range, and the terrain type the troop is now on.
         """
         gx = new_pos.x / CELL_SIZE
@@ -777,13 +777,13 @@ class Environment:
         return new_pos, enemies_in_range, new_terrain
 
     def _apply_combat(
-        self, enemies_in_range: list, on_terrain: Terrain_type, troop: Troop
+        self, enemies_in_range: list, on_terrain: TerrainType, troop: Troop
     ) -> None:
         """Applies combat damage to nearest enemy in range based on terrain.
 
         Args:
             enemies_in_range (list): A list of enemies currently in range of the troop
-            on_terrain (Terrain_type): The terrain type the troop is on
+            on_terrain (TerrainType): The terrain type the troop is on
         """
         if enemies_in_range:
             attack_power = on_terrain.attack_mod / 25
@@ -792,14 +792,14 @@ class Environment:
         troop.attacking = bool(enemies_in_range)
 
     def _update_troop_vision_and_border(
-        self, player: Player, troop: Troop, on_terrain: Terrain_type
+        self, player: Player, troop: Troop, on_terrain: TerrainType
     ) -> None:
         """Updates the vision and border grids for a troop based on its current terrain.
 
         Args:
             player (Player): The player the troop belongs to
             troop (Troop): The troop to update vision and border for
-            on_terrain (Terrain_type): The terrain type the troop is on
+            on_terrain (TerrainType): The terrain type the troop is on
         """
         if on_terrain is HILL:
             self.city_vision_brush.apply(player.vision, troop.position, 0)

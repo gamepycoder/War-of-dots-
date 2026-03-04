@@ -13,7 +13,7 @@ AREA = PLAYERS * CITIES_PER_PLAYER * AREA_PER_CITIES
 CITY_PLACE_TRIES = 100
 
 
-class Terrain_type:
+class TerrainType:
     def __init__(self, name, color, threshold, attack_mod=1, speed_mod=1):
         self.name = name
         self.color = color
@@ -22,11 +22,11 @@ class Terrain_type:
         self.speed_mod = speed_mod
 
 
-FOREST = Terrain_type("forest", (30, 125, 30), 0.5, attack_mod=0.75, speed_mod=0.8)
-WATER = Terrain_type("water", (0, 220, 255), -0.1, attack_mod=0.5, speed_mod=0.6)
-PLAINS = Terrain_type("plains", (20, 180, 20), 0.1, attack_mod=1.0, speed_mod=1.0)
-HILL = Terrain_type("hill", (150, 150, 150), 0.7, attack_mod=1.5, speed_mod=0.7)
-MOUNTAIN = Terrain_type(
+FOREST = TerrainType("forest", (30, 125, 30), 0.5, attack_mod=0.75, speed_mod=0.8)
+WATER = TerrainType("water", (0, 220, 255), -0.1, attack_mod=0.5, speed_mod=0.6)
+PLAINS = TerrainType("plains", (20, 180, 20), 0.1, attack_mod=1.0, speed_mod=1.0)
+HILL = TerrainType("hill", (150, 150, 150), 0.7, attack_mod=1.5, speed_mod=0.7)
+MOUNTAIN = TerrainType(
     "mountain", (100, 100, 100), 0.83, attack_mod=0.0, speed_mod=3.0
 )
 
