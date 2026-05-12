@@ -360,6 +360,9 @@ class Game:
         self.city_paths = []
         self.drawing_city_path = False
 
+        # Multi-unit selection
+        self.selected_units = set()
+
         self.pause = True
 
         self.terrain_by_zoom = {}
@@ -479,16 +482,30 @@ class Game:
             e (pygame.event.Event): The left mouse button down event
         """
         mx, my = e.pos[0], e.pos[1]
+        shift_held = pygame.key.get_mods() & pygame.KMOD_SHIFT
 
         # Try to select a troop
         best = self.find_troop_at_click(mx, my)
         if best is not None:
-            self.start_troop_path(best, mx, my)
+            if shift_held:
+                # Multi-unit selection mode
+                if best in self.selected_units:
+                    self.selected_units.remove(best)
+                else:
+                    self.selected_units.add(best)
+            else:
+                # Single selection mode
+                self.selected_units.clear()
+                self.selected_units.add(best)
+            self.start_troop_path(self.selected_units, mx, my)
         else:
             # Try to select a city
             best_city = self.find_city_at_click(mx, my)
             if best_city is not None:
                 self.start_city_path(best_city, mx, my)
+            elif not shift_held:
+                # Clear selection if clicking empty space without shift
+                self.selected_units.clear()
 
     def find_troop_at_click(self, mx: int, my: int) -> int:
         """Finds a troop at the given screen coordinates.
@@ -547,17 +564,34 @@ class Game:
                         best_dist2 = d2
         return best_city
 
-    def start_troop_path(self, tid: int, mx: int, my: int) -> None:
-        """Starts drawing a path for a troop.
+    def start_troop_path(self, tids, mx: int, my: int) -> None:
+        """Starts drawing a path for one or more troops.
 
         Args:
-            tid (int): The troop ID to start drawing a path for.
+            tids: A set of troop IDs or a single troop ID to start drawing paths for.
             mx (int): The x-coordinate in screen space.
             my (int): The y-coordinate in screen space.
         """
+        # Handle both single ID and set of IDs
+        if isinstance(tids, set):
+            unit_ids = tids
+        else:
+            unit_ids = {tids}
+
         self.drawing_path = True
-        self.remove_existing_troop_path(tid)
-        self.paths.append((tid, [self.best_troop_pos]))
+        
+        # Remove existing paths for all selected units
+        for tid in unit_ids:
+            self.remove_existing_troop_path(tid)
+        
+        # Create new paths for all selected units at their respective positions
+        troops = self.draw_info[2]
+        troop_positions = {tid: pos for pos, tid, owner, path, health, attacking in troops 
+                          if owner == self.player_num}
+        
+        for tid in unit_ids:
+            if tid in troop_positions:
+                self.paths.append((tid, [troop_positions[tid]]))
 
     def start_city_path(self, cid: int, mx: int, my: int) -> None:
         """Starts drawing a path for a city.
@@ -621,7 +655,7 @@ class Game:
             self.pan_camera(e.pos)
 
     def extend_troop_path(self, pos: tuple[int, int]) -> None:
-        """Extends the path for a troop.
+        """Extends the path for all currently drawing troops.
 
         Args:
             pos (tuple[int, int]): The position in screen space to extend the path to.
@@ -629,11 +663,14 @@ class Game:
         mx, my = pos
         wx = self.camx + mx / self.zoom
         wy = self.camy + my / self.zoom
-        lx, ly = self.paths[-1][1][-1]
-        dx = wx - lx
-        dy = wy - ly
-        if dx * dx + dy * dy > (PATH_SPACING / max(1.0, self.zoom)):
-            self.paths[-1][1].append((wx, wy))
+        
+        # Extend all paths that are currently being drawn
+        for path_entry in self.paths:
+            lx, ly = path_entry[1][-1]
+            dx = wx - lx
+            dy = wy - ly
+            if dx * dx + dy * dy > (PATH_SPACING / max(1.0, self.zoom)):
+                path_entry[1].append((wx, wy))
 
     def extend_city_path(self, pos: tuple[int, int]) -> None:
         """Extends the path for a city.
@@ -686,6 +723,7 @@ class Game:
         if e.key == pygame.K_c:
             self.paths = []
             self.city_paths = []
+            self.selected_units.clear()
         elif e.key == pygame.K_SPACE:
             self.submit_paths()
         elif e.key == pygame.K_p:
@@ -909,7 +947,7 @@ class Game:
             color = COLORS[owner]
             rgb = color
 
-            if tid in tids:
+            if tid in tids or tid in self.selected_units:
                 factor = 0.5
                 rgb = [max(0, min(255, int(x * factor))) for x in color]
             if path and owner == self.player_num:
